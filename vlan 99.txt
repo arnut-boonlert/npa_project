@@ -1,0 +1,6 @@
+vlan 99
+name management
+exit
+int vlan 99
+ip add
+no sh
