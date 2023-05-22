@@ -1,0 +1,15 @@
+[gateways]
+; gateway1 ansible_host=10.0.15.23
+; router1 ansible_host=10.0.15.23
+router2 ansible_host=10.0.15.24
+
+; [switches]
+; switch1 ansible_host=<switch1_ip>
+; switch2 ansible_host=<switch2_ip>
+; switch3 ansible_host=<switch3_ip>
+; switch4 ansible_host=<switch4_ip>
+
+[all:vars]
+ansible_user=admin
+ansible_password=cisco
+ansible_network_os=ios

@@ -1,0 +1,212 @@
+---
+- name: Configure network devices
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+  tasks:
+    - name: Configure g0/0, g0/1, g0/2 of gateway
+      ios_config:
+        lines:
+          - ip dhcp
+          - no shutdown
+        parents: interface GigabitEthernet0/0
+    - name: Configure g0/1 of gateway
+      ios_config:
+        lines:
+          - ip address 10.0.1.1 255.255.255.252
+          - no shutdown
+        parents: interface GigabitEthernet0/1
+    - name: Configure g0/2 of gateway
+      ios_config:
+        lines:
+          - ip address 10.0.1.5 255.255.255.252
+          - no shutdown
+        parents: interface GigabitEthernet0/1
+    #   ios_command:
+    #     commands:
+    #       - interface g0/0
+    #         ip address dhcp
+    #       - interface g0/1
+    #         ip address 10.0.1.1 255.255.255.252
+    #       - interface g0/3
+    #         ip address 10.0.1.5 255.255.255.252
+    #       - router ospf 1
+    #         network 10.0.1.0 0.0.0.3 area 0
+    #         network 10.0.1.4 0.0.0.3 area 0
+
+    - name: Configure g1, g2 of router 1
+      ios_config:
+        lines:
+          - ip address 10.0.1.2 255.255.255.252
+          - no shutdown
+        parents: interface GigabitEthernet1
+    - name: Configure g2 of router 1
+      ios_config:
+        lines:
+          - ip address 10.0.1.9 255.255.255.252
+          - no shutdown
+        parents: interface GigabitEthernet2
+      # ios_command:
+      #   commands:
+      #     - configure terminal
+      #     - interface g1
+      #     - ip address 10.0.1.2 255.255.255.252
+      #     - no shutdown
+      #     - interface g2
+      #     - ip address 10.0.1.9 255.255.255.252
+      #     - no shutdown
+      #     - router ospf 1
+      #     - network 10.0.1.0 0.0.0.3 area 0
+      #     - network 10.0.1.8 0.0.0.3 area 0
+      #     - network 10.2.15.0 0.0.0.255 area 0
+
+    - name: Configure g1, g2 of router 2 
+      ios_config:
+        lines:
+          - ip address 10.0.1.6 255.255.255.252
+          - no shutdown
+        parents: interface GigabitEthernet1
+    - name: Configure g2 of router 2
+      ios_config:
+        lines:
+          - ip address 10.0.1.10 255.255.255.252
+          - no shutdown
+        parents: interface GigabitEthernet2
+      # ios_ospfv2:
+      #   ios_config:
+      #     processes:
+      #       - process_id: 1
+      #         areas:
+      #           - area_id: 0
+      #         network:
+      #           - address: 10.0.40
+      #           - wildcard_bits: 0.0.0.252
+      #           - area: 0
+      #     state: merged
+      # ios_command:
+      #   commands:
+      #     - router ospf 1
+      #     - network 10.0.1.0 0.0.0.3 area 0
+      #     - network 10.0.1.8 0.0.0.3 area 0
+      #     - network 10.2.15.0 0.0.0.255 area 0
+
+    - name: Configure vlan 10, 20 of switch 1
+      ios_vlans:
+        config:
+          - name: vlan10
+            vlan_id: 10
+          - name: vlan20
+            vlan_id: 20
+        state: merged
+
+    - name: Configure trunk port of switch 1
+      ios_l2_interfaces:
+        config:
+          - name: GigabitEthernet0/0
+            mode: trunk
+            trunk:
+              encapsulation: dot1q
+            access:
+          - name: GigabitEthernet0/1
+            mode: trunk
+            trunk:
+              encapsulation: dot1q
+          - name: GigabitEthernet0/2
+            mode: trunk
+            trunk:
+              encapsulation: dot1q
+        state: merged
+    #   ios_command:
+    #     commands:
+    #       - interface g0/0
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/1
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/2
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/3
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - spanning-tree mode rapid-pvst
+    - name: Configure vlan 10, 20 of switch 2
+      ios_vlans:
+        config:
+          - name: vlan10
+            vlan_id: 10
+          - name: vlan20
+            vlan_id: 20
+        state: merged
+
+    - name: Configure trunk port of switch 2
+      ios_l2_interfaces:
+        config:
+          - name: GigabitEthernet0/1
+            mode: trunk
+            trunk:
+              encapsulation: dot1q
+            access:
+          - name: GigabitEthernet0/2
+            mode: trunk
+            trunk:
+              encapsulation: dot1q
+          - name: GigabitEthernet0/2
+            mode: trunk
+            trunk:
+              encapsulation: dot1q
+        state: merged
+
+    # - name: Configure switch 2
+    #   ios_command:
+    #     commands:
+    #       - interface g0/0
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/1
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/2
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/3
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - spanning-tree mode rapid-pvst
+
+
+
+
+
+
+
+
+    # - name: Configure switch 3
+    #   ios_command:
+    #     commands:
+    #       - interface g0/0
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/1
+    #         switchport mode access
+    #         switchport access vlan 10
+    #       - interface g0/2
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - spanning-tree mode rapid-pvst
+
+    # - name: Configure switch 4
+    #   ios_command:
+    #     commands:
+    #       - interface g0/0
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - interface g0/1
+    #         switchport mode access
+    #         switchport access vlan 10
+    #       - interface g0/2
+    #         switchport trunk encapsulation dot1q
+    #         switchport mode trunk
+    #       - spanning-tree mode rapid-pvst
+
