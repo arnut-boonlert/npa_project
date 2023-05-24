@@ -56,7 +56,7 @@
               encapsulation: dot1q
         state: merged
       when: inventory_hostname == "switch2"
-    - name: Configure access port of switch 1
+    - name: Configure access port of switch 2
       ios_l2_interfaces:
         config:
           - name: GigabitEthernet0/2
