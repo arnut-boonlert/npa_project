@@ -15,13 +15,13 @@
               - address: 10.0.1.5/30
         state: merged
       when: inventory_hostname == "gateway"
-    # - name: configure g0/0 of Gateway
-    #   ios_config:
-    #     lines:
-    #       - ip address dhcp
-    #       - no shutdown
-    #     parents: interface GigabitEthernet0/0
-    #   when: inventory_hostname == "gateway"
+    - name: configure g0/0 of Gateway
+      ios_config:
+        lines:
+          - ip address dhcp
+          - no shutdown
+        parents: interface GigabitEthernet0/0
+      when: inventory_hostname == "gateway"
     - name: Configure ospf of Gateway
       ios_config:
         lines:
@@ -42,10 +42,18 @@
           - no shutdown
           - encapsulation dot1q 10
           - ip address 10.0.10.1 255.255.255.0
-          - interface GigabitEthernet0/2.20
+          - interface GigabitEthernet0/1.20
           - no shutdown
           - encapsulation dot1q 20
           - ip address 10.0.20.1 255.255.255.0
+          - interface GigabitEthernet0/2.20
+          - no shutdown
+          - encapsulation dot1q 10
+          - ip address 10.0.10.2 255.255.255.0
+          - interface GigabitEthernet0/2.20
+          - no shutdown
+          - encapsulation dot1q 20
+          - ip address 10.0.20.2 255.255.255.0
       when: inventory_hostname == "gateway"
 
     - name: Configure IP of Router 1
