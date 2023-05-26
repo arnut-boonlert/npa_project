@@ -4,7 +4,7 @@
   gather_facts: no
   connection: network_cli
   tasks:
-    - name: Configure vlan 10, 20 of switch 1
+    - name: Configure vlan 30 of switch 1
       ios_vlans:
         config:
           - name: vlan30
