@@ -12,26 +12,59 @@
               - address: 10.0.1.1/30
         state: merged
       when: inventory_hostname == "gateway"
-    - name: configure g0/0 of Gateway
+    - name: Configure g0/0 of Gateway
       ios_config:
         lines:
           - ip address dhcp
           - no shutdown
+          - ip nat outside
+          - ip virtual-reassembly
         parents: interface GigabitEthernet0/0
       when: inventory_hostname == "gateway"
     - name: Configure ospf of Gateway
       ios_config:
         lines:
+          - router-id 1.1.1.1
           - network 10.0.1.0 0.0.0.3 area 0
-          - network 192.168.122.0 0.0.0.255 area 0
+          - default-information originate
         parents: router ospf 1 vrf data
+      when: inventory_hostname == "gateway"
+    - name: Configure acls of Gateway
+      ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+            - name: 1
+              aces:
+                - grant: permit
+                  source:
+                    address: 10.0.1.0
+                    wildcard_bits: 0.0.0.3
+                - grant: permit
+                  source:
+                    address: 192.168.10.0
+                    wildcard_bits: 0.0.0.255
+                - grant: permit
+                  source:
+                    address: 192.168.20.0
+                    wildcard_bits: 0.0.0.255
+                - grant: permit
+                  source:
+                    address: 192.168.30.0
+                    wildcard_bits: 0.0.0.255
       when: inventory_hostname == "gateway"
     - name: No shutdown interface of Gateway
       ios_command:
         commands:
           - configure terminal
+          - ip nat inside source list 1 interface g0/0 vrf data overload
+          - ip domain lookup
+          - ip dns server
+          - ip name-server vrf data 8.8.8.8
           - interface GigabitEthernet0/1
           - no shutdown
+          - ip nat inside
+          - ip virtual-reassembly
       when: inventory_hostname == "gateway"
 
     - name: Configure IP of Router 1
@@ -45,23 +78,32 @@
     - name: Configure ospf of Router 1
       ios_config:
         lines:
+          - router-id 2.2.2.2
           - network 10.0.1.0 0.0.0.3 area 0
           - network 192.168.10.0 0.0.0.255 area 0
           - network 192.168.20.0 0.0.0.255 area 0
           - network 192.168.30.0 0.0.0.255 area 0
+          - passive-interface gi2.10
+          - passive-interface gi2.20
+          - passive-interface gi3.30
         parents: router ospf 1 vrf data
       when: inventory_hostname == "router1"
     - name: Configure DHCP server
       ios_config:
         lines:
+          - vrf data
           - network 192.168.30.0 255.255.255.0
           - default-router 192.168.30.1
-        parents: ip dhcp pool POOL
+          - dns-server 8.8.8.8
+        parents: ip dhcp pool HOST
       when: inventory_hostname == "router1"
     - name: No shutdown interfaces and create sub-interfaces of Router 1
       ios_command:
         commands:
           - configure terminal
+          - ip domain lookup
+          - ip dns server
+          - ip name-server vrf data 8.8.8.8
           - interface GigabitEthernet1
           - no shutdown
           - interface GigabitEthernet2

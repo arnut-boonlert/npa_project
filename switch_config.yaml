@@ -7,7 +7,7 @@
     - name: Configure vlan 30 of switch 1
       ios_vlans:
         config:
-          - name: vlan30
+          - name: acess
             vlan_id: 30
         state: merged
       when: inventory_hostname == "switch1"
@@ -17,6 +17,7 @@
           - name: GigabitEthernet0/0
             mode: trunk
             trunk:
+              allowed_vlans: 30
               encapsulation: dot1q
         state: merged
       when: inventory_hostname == "switch1"
@@ -41,9 +42,9 @@
     - name: Configure vlan 10, 20 of switch 2
       ios_vlans:
         config:
-          - name: vlan10
+          - name: Server
             vlan_id: 10
-          - name: vlan20
+          - name: Storage
             vlan_id: 20
         state: merged
       when: inventory_hostname == "switch2"
@@ -53,6 +54,7 @@
           - name: GigabitEthernet0/0
             mode: trunk
             trunk:
+              allowed_vlans: 10, 20
               encapsulation: dot1q
         state: merged
       when: inventory_hostname == "switch2"
