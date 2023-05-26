@@ -1,13 +1,10 @@
 [routers]
 gateway ansible_host=172.31.102.3
 router1 ansible_host=172.31.102.4
-# router2 ansible_host=172.31.102.6
 
 [switches]
 switch1 ansible_host=172.31.102.5
 switch2 ansible_host=172.31.102.6
-# switch3 ansible_host=172.31.102.8
-# switch4 ansible_host=172.31.102.9
 
 [all:vars]
 ansible_user=admin

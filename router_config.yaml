@@ -23,7 +23,6 @@
       ios_config:
         lines:
           - network 10.0.1.0 0.0.0.3 area 0
-          # - network 172.31.102.0 0.0.0.15 area 0
           - network 192.168.122.0 0.0.0.255 area 0
         parents: router ospf 1 vrf data
       when: inventory_hostname == "gateway"
@@ -47,7 +46,6 @@
       ios_config:
         lines:
           - network 10.0.1.0 0.0.0.3 area 0
-          # - network 172.31.102.0 0.0.0.05 area 0
           - network 192.168.10.0 0.0.0.255 area 0
           - network 192.168.20.0 0.0.0.255 area 0
           - network 192.168.30.0 0.0.0.255 area 0
